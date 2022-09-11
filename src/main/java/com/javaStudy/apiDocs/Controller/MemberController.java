@@ -2,6 +2,7 @@ package com.javaStudy.apiDocs.Controller;
 
 import com.javaStudy.apiDocs.Entity.Member;
 import com.javaStudy.apiDocs.Repository.MemberRepository;
+import com.javaStudy.apiDocs.Service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,19 +18,23 @@ import java.util.Optional;
 @RequestMapping("/members")
 public class MemberController {
 
+    MemberService memberService;
     MemberRepository memberRepository;
 
-    public MemberController(MemberRepository memberRepository) {
+    public MemberController(MemberService memberService, MemberRepository memberRepository) {
+        this.memberService = memberService;
         this.memberRepository = memberRepository;
     }
 
-
     @PostMapping
-    public ResponseEntity postMember(Member member){
-
-        memberRepository.save(member);
-
-        return new ResponseEntity(member, HttpStatus.CREATED);
+    public ResponseEntity postMember(@RequestBody Member post){
+        Member member = new Member();
+        member.setName(post.getName());
+        member.setEmail(post.getEmail());
+        System.out.println(post);
+        System.out.println(member);
+        Member response = memberService.createMember(member);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{member-id}")
@@ -44,20 +49,20 @@ public class MemberController {
         Member response = memberRepository.save(findMember);
 
 
-        return new ResponseEntity(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") long memberId){
         Member response = memberRepository.findById(memberId).orElseThrow();
-        return new ResponseEntity(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity getMembers(int page, int size){
         Page<Member> memberPage = memberRepository.findAll(PageRequest.of(page,size, Sort.by("memberId").descending()));
         List<Member> members = memberPage.getContent();
-        return new ResponseEntity(members, HttpStatus.OK);
+        return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
     @DeleteMapping("/{member-id}")
