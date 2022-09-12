@@ -1,5 +1,6 @@
 package com.javaStudy.apiDocs.Controller;
 
+import com.javaStudy.apiDocs.Dto.MemberDto;
 import com.javaStudy.apiDocs.Entity.Member;
 import com.javaStudy.apiDocs.Repository.MemberRepository;
 import com.javaStudy.apiDocs.Service.MemberService;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,15 +29,20 @@ public class MemberController {
         this.memberRepository = memberRepository;
     }
 
+   /* @PostMapping
+    public ResponseEntity postMemberV1(@RequestParam ("name") String name,
+                                     @RequestParam ("email") String email){
+       Map<String,String> map = new HashMap<>();
+       map.put("name", name);
+       map.put("email", email);
+
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }*/
+
     @PostMapping
-    public ResponseEntity postMember(@RequestBody Member post){
-        Member member = new Member();
-        member.setName(post.getName());
-        member.setEmail(post.getEmail());
-        System.out.println(post);
-        System.out.println(member);
-        Member response = memberService.createMember(member);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity postMemberV2(@RequestBody MemberDto memberDto){
+
+        return new ResponseEntity<>(memberDto, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{member-id}")
